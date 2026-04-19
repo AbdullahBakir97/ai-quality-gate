@@ -1,0 +1,94 @@
+[build-system]
+requires = ["setuptools>=75.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-quality-gate"
+version = "1.0.0"
+description = "GitHub App that detects AI-generated issues and PRs, scores contribution quality, and protects maintainers from automated spam."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.12"
+authors = [{ name = "Abdullah Bakir", email = "abdullah.bakir.1997@gmail.com" }]
+keywords = ["github-app", "ai-detection", "code-quality", "contribution-quality"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Framework :: FastAPI",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Quality Assurance",
+]
+
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+    "httpx>=0.28.0",
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.7.0",
+    "PyJWT[crypto]>=2.10.0",
+    "PyYAML>=6.0.0",
+    "structlog>=24.4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=6.0.0",
+    "httpx",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+]
+ml = [
+    "scikit-learn>=1.6.0",
+    "transformers>=4.47.0",
+    "torch>=2.5.0",
+]
+
+[project.scripts]
+ai-quality-gate = "src.main:main"
+
+[project.urls]
+Homepage = "https://github.com/AbdullahBakir97/ai-quality-gate"
+Repository = "https://github.com/AbdullahBakir97/ai-quality-gate"
+Issues = "https://github.com/AbdullahBakir97/ai-quality-gate/issues"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "TCH",  # flake8-type-checking
+    "RUF",  # ruff-specific
+]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-v --tb=short --cov=src --cov-report=term-missing"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["tests/*"]

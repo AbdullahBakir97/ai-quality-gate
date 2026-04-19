@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Quality Gate - GitHub App</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --green: #3fb950;
+      --yellow: #d29922;
+      --red: #f85149;
+      --purple: #bc8cff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+    }
+    header .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 80px 0 60px;
+    }
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 20px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 32px;
+    }
+    .cta-group { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #79c0ff; }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { border-color: var(--text-muted); }
+
+    /* Live Demo */
+    .demo-section {
+      padding: 60px 0;
+      border-top: 1px solid var(--border);
+    }
+    .demo-section h2 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    .demo-section .subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+    .demo-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .demo-input {
+      width: 100%;
+      min-height: 120px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+      resize: vertical;
+      margin-bottom: 16px;
+    }
+    .demo-input:focus { outline: none; border-color: var(--accent); }
+    .demo-btn {
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 24px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .demo-btn:hover { background: #79c0ff; }
+
+    .results {
+      margin-top: 24px;
+      display: none;
+    }
+    .results.active { display: block; }
+    .result-header {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .score-card {
+      flex: 1;
+      min-width: 200px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+    .score-card .label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .score-card .value {
+      font-size: 36px;
+      font-weight: 700;
+    }
+    .score-card .tag {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .tag-green { background: rgba(63, 185, 80, 0.15); color: var(--green); }
+    .tag-yellow { background: rgba(210, 153, 34, 0.15); color: var(--yellow); }
+    .tag-red { background: rgba(248, 81, 73, 0.15); color: var(--red); }
+
+    .signals-list {
+      list-style: none;
+      margin-top: 12px;
+    }
+    .signals-list li {
+      padding: 8px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 6px;
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .signal-type {
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--accent);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* Features */
+    .features {
+      padding: 60px 0;
+      border-top: 1px solid var(--border);
+    }
+    .features h2 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 40px;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .feature-card .icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+    .feature-card h3 {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* Config example */
+    .config-section {
+      padding: 60px 0;
+      border-top: 1px solid var(--border);
+    }
+    .config-section h2 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    .config-section .subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text-muted);
+    }
+    pre .key { color: var(--accent); }
+    pre .val { color: var(--green); }
+    pre .comment { color: #6e7681; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <a href="#" class="logo">
+        <div class="logo-icon">G</div>
+        AI Quality Gate
+      </a>
+      <nav class="nav-links">
+        <a href="#demo">Try It</a>
+        <a href="#features">Features</a>
+        <a href="#config">Config</a>
+        <a href="https://github.com/apps/ai-quality-gate">Install</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1>Stop low-quality <span>AI spam</span><br>from flooding your repo</h1>
+        <p>
+          A GitHub App that detects AI-generated issues and PRs,
+          scores contribution quality, and protects maintainers from noise.
+        </p>
+        <div class="cta-group">
+          <a href="https://github.com/apps/ai-quality-gate" class="btn btn-primary">Install on GitHub</a>
+          <a href="#demo" class="btn btn-outline">Try the Demo</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo-section" id="demo">
+      <div class="container">
+        <h2>Live Detection Demo</h2>
+        <p class="subtitle">Paste any issue or PR description to see how it scores</p>
+
+        <div class="demo-card">
+          <textarea class="demo-input" id="demoInput" placeholder="Paste an issue or PR description here to analyze it...
+
+Example: This PR delves into the intricacies of the codebase to leverage a more robust and seamless approach. It's worth noting that the changes foster a holistic improvement. Here's a breakdown of the modifications..."></textarea>
+          <button class="demo-btn" onclick="runAnalysis()">Analyze</button>
+
+          <div class="results" id="results">
+            <div class="result-header">
+              <div class="score-card">
+                <div class="label">AI Detection</div>
+                <div class="value" id="aiScore">0</div>
+                <span class="tag" id="aiTag">Human</span>
+              </div>
+              <div class="score-card">
+                <div class="label">Quality Score</div>
+                <div class="value" id="qualityScore">0</div>
+                <span class="tag" id="qualityTag">-</span>
+              </div>
+              <div class="score-card">
+                <div class="label">Confidence</div>
+                <div class="value" id="confidence" style="font-size: 24px;">-</div>
+                <span class="tag" id="confTag">-</span>
+              </div>
+            </div>
+            <h4 style="margin-bottom: 8px;">Signals Detected</h4>
+            <ul class="signals-list" id="signalsList"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features" id="features">
+      <div class="container">
+        <h2>How It Works</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="icon">&#x1F50D;</div>
+            <h3>AI Fingerprint Detection</h3>
+            <p>Analyzes vocabulary, sentence structure, and patterns unique to AI-generated text like "delve", "leverage", and uniform paragraph lengths.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">&#x1F4CA;</div>
+            <h3>Quality Scoring</h3>
+            <p>Scores issues and PRs on specificity, reproduction steps, linked issues, test coverage, and description quality (0-100).</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">&#x2705;</div>
+            <h3>GitHub Checks</h3>
+            <p>Shows pass/warn/fail status directly on pull requests with detailed breakdown of all signals and quality checks.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">&#x1F3F7;&#xFE0F;</div>
+            <h3>Auto-Labeling</h3>
+            <p>Applies labels like "ai-generated", "ai-suspected", "low-quality", and "high-quality" based on configurable thresholds.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">&#x2699;&#xFE0F;</div>
+            <h3>Per-Repo Config</h3>
+            <p>Drop a .github/ai-gate.yml to customize thresholds, actions (comment, label, request-changes, close), and exempt users.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">&#x1F6E1;&#xFE0F;</div>
+            <h3>Hallucination Detection</h3>
+            <p>Catches fake API references, nonexistent version numbers, and vague documentation links that signal AI hallucination.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="config-section" id="config">
+      <div class="container">
+        <h2>Easy Configuration</h2>
+        <p class="subtitle">Add <code>.github/ai-gate.yml</code> to customize behavior per repository</p>
+        <pre><span class="comment"># .github/ai-gate.yml</span>
+
+<span class="key">ai</span>:
+  <span class="key">warn</span>: <span class="val">50</span>         <span class="comment"># Score to trigger warning</span>
+  <span class="key">fail</span>: <span class="val">80</span>         <span class="comment"># Score to trigger failure</span>
+  <span class="key">action</span>: <span class="val">comment</span>  <span class="comment"># comment | label | request-changes | close</span>
+
+<span class="key">quality</span>:
+  <span class="key">minimum</span>: <span class="val">30</span>      <span class="comment"># Minimum quality score to pass</span>
+  <span class="key">action</span>: <span class="val">comment</span>  <span class="comment"># What to do when quality is too low</span>
+
+<span class="key">analyze</span>:
+  <span class="key">issues</span>: <span class="val">true</span>
+  <span class="key">pull_requests</span>: <span class="val">true</span>
+
+<span class="key">exempt</span>:
+  <span class="key">users</span>: [<span class="val">trusted-bot</span>, <span class="val">core-maintainer</span>]
+  <span class="key">labels</span>: [<span class="val">bot</span>, <span class="val">automated</span>]
+  <span class="key">bots</span>: <span class="val">true</span></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>AI Quality Gate &mdash; Open source GitHub App &mdash; <a href="#">GitHub</a> &middot; <a href="#">Marketplace</a></p>
+    </div>
+  </footer>
+
+  <script>
+    // Client-side AI detection (mirrors server-side patterns.js)
+    const AI_PHRASES = [
+      { pattern: /\bdelve\b/gi, weight: 0.3, label: "ai-vocabulary" },
+      { pattern: /\bleverage\b/gi, weight: 0.15, label: "ai-vocabulary" },
+      { pattern: /\bfoster\b/gi, weight: 0.15, label: "ai-vocabulary" },
+      { pattern: /\btapestry\b/gi, weight: 0.25, label: "ai-vocabulary" },
+      { pattern: /\bholistic\b/gi, weight: 0.15, label: "ai-vocabulary" },
+      { pattern: /\bseamless(ly)?\b/gi, weight: 0.15, label: "ai-vocabulary" },
+      { pattern: /\brobust\b/gi, weight: 0.1, label: "ai-vocabulary" },
+      { pattern: /\bpivotal\b/gi, weight: 0.2, label: "ai-vocabulary" },
+      { pattern: /\bmeticulous(ly)?\b/gi, weight: 0.2, label: "ai-vocabulary" },
+      { pattern: /\bcommendable\b/gi, weight: 0.2, label: "ai-vocabulary" },
+      { pattern: /\bit'?s worth noting\b/gi, weight: 0.3, label: "ai-phrasing" },
+      { pattern: /\bthis ensures that\b/gi, weight: 0.2, label: "ai-phrasing" },
+      { pattern: /\bhere'?s? (?:a |an )?(?:breakdown|summary|overview)\b/gi, weight: 0.35, label: "ai-phrasing" },
+      { pattern: /\bI'd be happy to\b/gi, weight: 0.4, label: "ai-phrasing" },
+      { pattern: /\bhope this helps\b/gi, weight: 0.4, label: "ai-phrasing" },
+      { pattern: /\bfeel free to\b/gi, weight: 0.15, label: "ai-phrasing" },
+      { pattern: /\blet me know if you\b/gi, weight: 0.2, label: "ai-phrasing" },
+      { pattern: /\bin conclusion\b/gi, weight: 0.15, label: "ai-phrasing" },
+      { pattern: /\bfurthermore\b/gi, weight: 0.1, label: "ai-phrasing" },
+      { pattern: /\badditionally\b/gi, weight: 0.1, label: "ai-phrasing" },
+    ];
+
+    function runAnalysis() {
+      const text = document.getElementById('demoInput').value;
+      if (!text.trim()) return;
+
+      let rawScore = 0;
+      const signals = [];
+
+      // Check phrases
+      for (const phrase of AI_PHRASES) {
+        const matches = text.match(phrase.pattern);
+        if (matches) {
+          const contribution = Math.min(phrase.weight * matches.length, phrase.weight * 3);
+          rawScore += contribution;
+          signals.push({
+            type: phrase.label,
+            pattern: phrase.pattern.source.replace(/\\b/g, ''),
+            contribution: Math.round(contribution * 100) / 100,
+          });
+        }
+      }
+
+      // Structural checks
+      const numberedItems = (text.match(/^\s*\d+[\.\)]\s/gm) || []).length;
+      const lines = text.split('\n').filter(l => l.trim()).length;
+      if (lines > 3 && numberedItems / lines > 0.5) {
+        rawScore += 0.3;
+        signals.push({ type: 'structural', pattern: 'numbered-list-heavy', contribution: 0.3 });
+      }
+
+      const headers = (text.match(/^#{1,6}\s/gm) || []).length;
+      const words = text.split(/\s+/).length;
+      if (headers >= 3 && words < 300) {
+        rawScore += 0.25;
+        signals.push({ type: 'structural', pattern: 'header-heavy', contribution: 0.25 });
+      }
+
+      const aiScore = Math.min(Math.round(rawScore * 25), 100);
+
+      // Simple quality score based on length and specifics
+      let qScore = 0;
+      if (text.length > 20) qScore += 15;
+      if (text.length > 100) qScore += 10;
+      if (/```/.test(text)) qScore += 15;
+      if (/#\d+/.test(text)) qScore += 10;
+      if (/\b(steps?|reproduce|expected|actual)\b/i.test(text)) qScore += 15;
+      if (/\b(version|os|platform|node|python)\b/i.test(text)) qScore += 10;
+      if (/!\[/.test(text)) qScore += 5;
+      if (words > 30) qScore += 10;
+      if (words > 50 && words < 500) qScore += 10;
+      qScore = Math.min(qScore, 100);
+
+      // Confidence
+      const signalCount = signals.length;
+      let confidence = 'minimal';
+      if (aiScore >= 70 && signalCount >= 5) confidence = 'high';
+      else if (aiScore >= 50 && signalCount >= 3) confidence = 'medium';
+      else if (aiScore >= 30 && signalCount >= 2) confidence = 'low';
+
+      // Update UI
+      document.getElementById('results').classList.add('active');
+      document.getElementById('aiScore').textContent = aiScore;
+      document.getElementById('qualityScore').textContent = qScore;
+      document.getElementById('confidence').textContent = confidence;
+
+      const aiTag = document.getElementById('aiTag');
+      if (aiScore >= 70) { aiTag.textContent = 'Likely AI'; aiTag.className = 'tag tag-red'; }
+      else if (aiScore >= 40) { aiTag.textContent = 'Suspected'; aiTag.className = 'tag tag-yellow'; }
+      else { aiTag.textContent = 'Likely Human'; aiTag.className = 'tag tag-green'; }
+
+      const qTag = document.getElementById('qualityTag');
+      const grade = qScore >= 80 ? 'A' : qScore >= 60 ? 'B' : qScore >= 40 ? 'C' : qScore >= 20 ? 'D' : 'F';
+      qTag.textContent = 'Grade ' + grade;
+      if (qScore >= 60) qTag.className = 'tag tag-green';
+      else if (qScore >= 30) qTag.className = 'tag tag-yellow';
+      else qTag.className = 'tag tag-red';
+
+      const confTag = document.getElementById('confTag');
+      confTag.textContent = signalCount + ' signals';
+      confTag.className = 'tag ' + (confidence === 'high' ? 'tag-red' : confidence === 'medium' ? 'tag-yellow' : 'tag-green');
+
+      // Render signals
+      const list = document.getElementById('signalsList');
+      list.innerHTML = '';
+      if (signals.length === 0) {
+        list.innerHTML = '<li>No AI signals detected</li>';
+      } else {
+        signals.sort((a, b) => b.contribution - a.contribution);
+        for (const s of signals) {
+          const li = document.createElement('li');
+          li.innerHTML = `<span><span class="signal-type">${s.type}</span> ${s.pattern}</span><span>+${s.contribution}</span>`;
+          list.appendChild(li);
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>
