@@ -53,9 +53,9 @@ class Container:
 
         self.detectors = [
             PatternDetector(self.pattern_registry),
-            StructureDetector(),
-            HallucinationDetector(),
-            CodeDetector(),
+            StructureDetector(self.pattern_registry),
+            HallucinationDetector(self.pattern_registry),
+            CodeDetector(self.pattern_registry),
         ]
 
         # Scorers and aggregator are imported lazily to allow the
