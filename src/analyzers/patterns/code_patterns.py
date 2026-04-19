@@ -13,9 +13,7 @@ _RE_ADDED_LINE = re.compile(r"^\+(?!\+\+)")
 _RE_COMMENT_LINE = re.compile(r"^\+\s*(//|#|/\*|\*|<!--)")
 _RE_IMPORT_LINE = re.compile(r"^\+\s*(import |from .+ import |require\(|use )")
 _RE_TODO = re.compile(r"\b(?:TODO|FIXME|PLACEHOLDER)\b", re.IGNORECASE)
-_RE_GENERIC_NAME = re.compile(
-    r"\b(?:handleClick|fetchData|temp|data|result|value|item|obj|arr|foo|bar)\b"
-)
+_RE_GENERIC_NAME = re.compile(r"\b(?:handleClick|fetchData|temp|data|result|value|item|obj|arr|foo|bar)\b")
 
 
 def _excessive_comments(text: str) -> float:

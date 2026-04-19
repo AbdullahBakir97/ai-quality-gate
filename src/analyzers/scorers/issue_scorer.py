@@ -35,9 +35,7 @@ class IssueScorer(BaseScorer):
     def _check_reproduction_steps(body: str) -> QualityCheck:
         """Check for steps to reproduce, expected/actual behavior, or numbered steps."""
         if not body:
-            return QualityCheck(
-                "reproduction-steps", 0, 15, "No reproduction steps provided"
-            )
+            return QualityCheck("reproduction-steps", 0, 15, "No reproduction steps provided")
 
         has_steps_header = bool(
             re.search(
@@ -46,34 +44,22 @@ class IssueScorer(BaseScorer):
                 re.IGNORECASE,
             )
         )
-        has_expected_actual = bool(
-            re.search(r"expected\s+(?:behavior|result|output)", body, re.IGNORECASE)
-        ) and bool(
+        has_expected_actual = bool(re.search(r"expected\s+(?:behavior|result|output)", body, re.IGNORECASE)) and bool(
             re.search(r"actual\s+(?:behavior|result|output)", body, re.IGNORECASE)
         )
-        has_numbered_steps = bool(
-            re.search(r"^\s*\d+[.)]\s+\S", body, re.MULTILINE)
-        )
+        has_numbered_steps = bool(re.search(r"^\s*\d+[.)]\s+\S", body, re.MULTILINE))
 
         if has_steps_header or has_expected_actual:
-            return QualityCheck(
-                "reproduction-steps", 15, 15, "Reproduction steps provided"
-            )
+            return QualityCheck("reproduction-steps", 15, 15, "Reproduction steps provided")
         if has_numbered_steps:
-            return QualityCheck(
-                "reproduction-steps", 10, 15, "Numbered steps found (consider labeling them)"
-            )
-        return QualityCheck(
-            "reproduction-steps", 0, 15, "No reproduction steps provided"
-        )
+            return QualityCheck("reproduction-steps", 10, 15, "Numbered steps found (consider labeling them)")
+        return QualityCheck("reproduction-steps", 0, 15, "No reproduction steps provided")
 
     @staticmethod
     def _check_environment_info(body: str) -> QualityCheck:
         """Check for version, OS, browser, or runtime environment mentions."""
         if not body:
-            return QualityCheck(
-                "environment-info", 0, 10, "No environment info provided"
-            )
+            return QualityCheck("environment-info", 0, 10, "No environment info provided")
 
         env_patterns = [
             re.compile(r"\b(?:version|ver\.?)\s*[:\s]?\s*\d", re.IGNORECASE),
@@ -86,16 +72,10 @@ class IssueScorer(BaseScorer):
 
         matches = sum(1 for p in env_patterns if p.search(body))
         if matches >= 2:
-            return QualityCheck(
-                "environment-info", 10, 10, "Environment details provided"
-            )
+            return QualityCheck("environment-info", 10, 10, "Environment details provided")
         if matches == 1:
-            return QualityCheck(
-                "environment-info", 5, 10, "Partial environment info provided"
-            )
-        return QualityCheck(
-            "environment-info", 0, 10, "No environment info provided"
-        )
+            return QualityCheck("environment-info", 5, 10, "Partial environment info provided")
+        return QualityCheck("environment-info", 0, 10, "No environment info provided")
 
     @staticmethod
     def _check_screenshots(body: str) -> QualityCheck:
@@ -132,7 +112,5 @@ class IssueScorer(BaseScorer):
         ]
 
         if any(p.search(body) for p in search_signals):
-            return QualityCheck(
-                "search-evidence", 5, 5, "References to related issues or prior search"
-            )
+            return QualityCheck("search-evidence", 5, 5, "References to related issues or prior search")
         return QualityCheck("search-evidence", 0, 5, "No search evidence")

@@ -29,17 +29,14 @@ class HallucinationDetector(BaseDetector):
                     Signal(
                         type=pattern_def.signal_type,
                         pattern=pattern_def.label,
-                        description=pattern_def.description
-                        or f"Hallucination pattern: {pattern_def.label}",
+                        description=pattern_def.description or f"Hallucination pattern: {pattern_def.label}",
                         weight=pattern_def.weight,
                         occurrences=len(matches),
                     )
                 )
 
         # 2. Suspicious version numbers (e.g. v14.2.7, very specific but unlikely)
-        version_refs = re.findall(
-            r"\bv?\d{1,3}\.\d{1,3}\.\d{1,3}(?:\.\d{1,3})?\b", text
-        )
+        version_refs = re.findall(r"\bv?\d{1,3}\.\d{1,3}\.\d{1,3}(?:\.\d{1,3})?\b", text)
         if len(version_refs) >= 3:
             signals.append(
                 Signal(
@@ -52,9 +49,7 @@ class HallucinationDetector(BaseDetector):
             )
 
         # 3. Fake-looking API references (e.g. someApi.someMethod())
-        api_calls = re.findall(
-            r"\b[a-z][a-zA-Z]+\.[a-z][a-zA-Z]+\([^)]*\)", text
-        )
+        api_calls = re.findall(r"\b[a-z][a-zA-Z]+\.[a-z][a-zA-Z]+\([^)]*\)", text)
         if len(api_calls) >= 5:
             signals.append(
                 Signal(
@@ -81,9 +76,7 @@ class HallucinationDetector(BaseDetector):
 
         # 5. Fabricated citation patterns ([1], [2], ... without actual reference list)
         inline_citations = re.findall(r"\[(\d+)\]", text)
-        has_reference_section = bool(
-            re.search(r"(?:references|bibliography|sources)\s*\n", text, re.IGNORECASE)
-        )
+        has_reference_section = bool(re.search(r"(?:references|bibliography|sources)\s*\n", text, re.IGNORECASE))
         if len(inline_citations) >= 3 and not has_reference_section:
             signals.append(
                 Signal(

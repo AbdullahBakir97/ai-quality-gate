@@ -28,10 +28,7 @@ def configure_logging(settings: Settings) -> None:
         datefmt = "%H:%M:%S"
     else:
         # JSON-like structured format for production log aggregation
-        fmt = (
-            '{"time":"%(asctime)s","level":"%(levelname)s",'
-            '"logger":"%(name)s","message":"%(message)s"}'
-        )
+        fmt = '{"time":"%(asctime)s","level":"%(levelname)s","logger":"%(name)s","message":"%(message)s"}'
         datefmt = "%Y-%m-%dT%H:%M:%S"
 
     handler = logging.StreamHandler(sys.stdout)

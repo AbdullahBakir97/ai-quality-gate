@@ -57,11 +57,7 @@ class AnalysisOrchestrator:
         ai_score, confidence, is_likely_ai = self._aggregator.aggregate(all_signals, text)
 
         # Run the appropriate scorer based on contribution type
-        scorer = (
-            self._pr_scorer
-            if context.contribution_type == ContributionType.PULL_REQUEST
-            else self._issue_scorer
-        )
+        scorer = self._pr_scorer if context.contribution_type == ContributionType.PULL_REQUEST else self._issue_scorer
         quality_report = await scorer.score(context)
 
         logger.info(

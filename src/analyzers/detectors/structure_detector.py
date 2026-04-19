@@ -30,8 +30,7 @@ class StructureDetector(BaseDetector):
                     Signal(
                         type=pattern_def.signal_type,
                         pattern=pattern_def.label,
-                        description=pattern_def.description
-                        or f"Structural pattern: {pattern_def.label}",
+                        description=pattern_def.description or f"Structural pattern: {pattern_def.label}",
                         weight=pattern_def.weight,
                         occurrences=len(matches),
                     )
@@ -83,9 +82,7 @@ class StructureDetector(BaseDetector):
             )
 
         # 5. Formulaic section pattern (e.g. Header -> paragraph -> list, repeated)
-        section_pattern = re.compile(
-            r"^#{1,6}\s.+\n\n.+\n\n[-*]\s", re.MULTILINE
-        )
+        section_pattern = re.compile(r"^#{1,6}\s.+\n\n.+\n\n[-*]\s", re.MULTILINE)
         formulaic = section_pattern.findall(text)
         if len(formulaic) >= 3:
             signals.append(

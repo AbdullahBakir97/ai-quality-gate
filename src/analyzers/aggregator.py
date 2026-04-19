@@ -14,15 +14,30 @@ class SignalAggregator:
     """Aggregates detection signals into a final AI score with confidence."""
 
     _FILLER_WORDS: ClassVar[set[str]] = {
-        "very", "really", "just", "quite", "rather", "somewhat", "basically",
-        "actually", "literally", "simply", "essentially", "overall",
-        "generally", "typically", "usually", "obviously", "clearly",
-        "certainly", "definitely", "absolutely", "incredibly",
+        "very",
+        "really",
+        "just",
+        "quite",
+        "rather",
+        "somewhat",
+        "basically",
+        "actually",
+        "literally",
+        "simply",
+        "essentially",
+        "overall",
+        "generally",
+        "typically",
+        "usually",
+        "obviously",
+        "clearly",
+        "certainly",
+        "definitely",
+        "absolutely",
+        "incredibly",
     }
 
-    def aggregate(
-        self, signals: list[Signal], text: str
-    ) -> tuple[int, Confidence, bool]:
+    def aggregate(self, signals: list[Signal], text: str) -> tuple[int, Confidence, bool]:
         """Compute a final AI score, confidence level, and likelihood flag.
 
         Returns:
@@ -100,11 +115,7 @@ class SignalAggregator:
         if len(sentences) < 5:
             return 0.0
 
-        starters = [
-            s.split()[0].lower()
-            for s in sentences
-            if s.strip() and s.split()
-        ]
+        starters = [s.split()[0].lower() for s in sentences if s.strip() and s.split()]
         if not starters:
             return 0.0
 

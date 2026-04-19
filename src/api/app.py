@@ -37,6 +37,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     """
     if settings is None:
         from src.config.settings import Settings
+
         settings = Settings()
 
     configure_logging(settings)

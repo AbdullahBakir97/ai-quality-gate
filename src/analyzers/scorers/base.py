@@ -41,19 +41,11 @@ class BaseScorer(IScorer, ABC):
         ]
         for pattern in vague:
             if pattern.match(title.strip()):
-                return QualityCheck(
-                    "title-specificity", 0, 10, f'Vague title: "{title}"'
-                )
+                return QualityCheck("title-specificity", 0, 10, f'Vague title: "{title}"')
 
-        has_specifics = bool(
-            re.search(r"[A-Z][a-z]+[A-Z]|_[a-z]|[a-z]\(\)|\.{1}[a-z]", title)
-        )
+        has_specifics = bool(re.search(r"[A-Z][a-z]+[A-Z]|_[a-z]|[a-z]\(\)|\.{1}[a-z]", title))
         score = 10 if has_specifics else 6
-        detail = (
-            "Title references specific code/component"
-            if has_specifics
-            else "Title could be more specific"
-        )
+        detail = "Title references specific code/component" if has_specifics else "Title could be more specific"
         return QualityCheck("title-specificity", score, 10, detail)
 
     def _check_body_presence(self, body: str) -> QualityCheck:

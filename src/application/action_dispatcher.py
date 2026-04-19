@@ -56,27 +56,19 @@ class ActionDispatcher:
         # Apply labels
         labels = self._determine_labels(result, config)
         if labels:
-            await self._client.add_labels(
-                context.repo_owner, context.repo_name, context.number, labels
-            )
+            await self._client.add_labels(context.repo_owner, context.repo_name, context.number, labels)
 
         # Build and post comment
         comment = self._build_comment(result, config)
-        await self._client.post_comment(
-            context.repo_owner, context.repo_name, context.number, comment
-        )
+        await self._client.post_comment(context.repo_owner, context.repo_name, context.number, comment)
 
         # Determine strongest action
         action = self._determine_action(result, config)
         match action:
             case "close":
-                await self._client.close_contribution(
-                    context.repo_owner, context.repo_name, context.number
-                )
+                await self._client.close_contribution(context.repo_owner, context.repo_name, context.number)
             case "request-changes" if context.contribution_type == ContributionType.PULL_REQUEST:
-                await self._client.request_changes(
-                    context.repo_owner, context.repo_name, context.number, comment
-                )
+                await self._client.request_changes(context.repo_owner, context.repo_name, context.number, comment)
 
         logger.info(
             "Dispatched action=%s for %s/%s#%d (ai=%d, quality=%d)",
@@ -123,15 +115,20 @@ class ActionDispatcher:
         should_act_ai = result.ai_score >= config.ai.warn
         should_act_quality = result.quality_report.score < config.quality.minimum
 
-        signals_text = "\n".join(
-            f"- **{s.pattern}** — {s.description} (weight: {s.contribution:.1f})"
-            for s in result.ai_signals[:10]
-        ) or "_No signals detected._"
+        signals_text = (
+            "\n".join(
+                f"- **{s.pattern}** — {s.description} (weight: {s.contribution:.1f})" for s in result.ai_signals[:10]
+            )
+            or "_No signals detected._"
+        )
 
-        improvements_text = "\n".join(
-            f"- **{c.name}**: {c.detail} ({c.score}/{c.max_score})"
-            for c in result.quality_report.failed_checks + result.quality_report.partial_checks
-        ) or "_No improvements needed._"
+        improvements_text = (
+            "\n".join(
+                f"- **{c.name}**: {c.detail} ({c.score}/{c.max_score})"
+                for c in result.quality_report.failed_checks + result.quality_report.partial_checks
+            )
+            or "_No improvements needed._"
+        )
 
         if should_act_ai and should_act_quality:
             template = MESSAGE_TEMPLATES["combined"]

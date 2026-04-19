@@ -24,17 +24,12 @@ class PatternDetector(BaseDetector):
             for pattern_def in self._registry.get_by_type(signal_type):
                 matches = pattern_def.pattern.findall(text)
                 if matches:
-                    prefix = (
-                        "AI vocabulary"
-                        if signal_type == SignalType.AI_VOCABULARY
-                        else "AI phrasing"
-                    )
+                    prefix = "AI vocabulary" if signal_type == SignalType.AI_VOCABULARY else "AI phrasing"
                     signals.append(
                         Signal(
                             type=pattern_def.signal_type,
                             pattern=pattern_def.label,
-                            description=pattern_def.description
-                            or f"{prefix}: {pattern_def.label}",
+                            description=pattern_def.description or f"{prefix}: {pattern_def.label}",
                             weight=pattern_def.weight,
                             occurrences=len(matches),
                         )

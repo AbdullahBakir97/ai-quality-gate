@@ -36,9 +36,7 @@ def register_error_handlers(app: FastAPI) -> None:
     """
 
     @app.exception_handler(AIQualityGateError)
-    async def handle_domain_error(
-        request: Request, exc: AIQualityGateError
-    ) -> JSONResponse:
+    async def handle_domain_error(request: Request, exc: AIQualityGateError) -> JSONResponse:
         """Convert domain exceptions into JSON error responses."""
         status_code = _STATUS_MAP.get(type(exc), 500)
         logger.error("Domain error [%s]: %s", type(exc).__name__, exc)
@@ -51,9 +49,7 @@ def register_error_handlers(app: FastAPI) -> None:
         )
 
     @app.exception_handler(Exception)
-    async def handle_unexpected_error(
-        request: Request, exc: Exception
-    ) -> JSONResponse:
+    async def handle_unexpected_error(request: Request, exc: Exception) -> JSONResponse:
         """Catch-all for unhandled exceptions."""
         logger.exception("Unexpected error: %s", exc)
         return JSONResponse(

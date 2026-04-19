@@ -11,9 +11,7 @@ __all__ = ["get_hallucination_patterns"]
 # Pre-compiled regexes for hallucination detection.
 _RE_LONG_METHOD = re.compile(r"\b[a-z][a-zA-Z]{15,}\(")
 _RE_SPECIFIC_VERSION = re.compile(r"\b\d+\.\d+\.\d+(?:\.\d+)?\b")
-_RE_SEE_DOCS = re.compile(
-    r"\bsee (?:the )?documentation\b", re.IGNORECASE
-)
+_RE_SEE_DOCS = re.compile(r"\bsee (?:the )?documentation\b", re.IGNORECASE)
 _RE_URL = re.compile(r"https?://\S+")
 
 

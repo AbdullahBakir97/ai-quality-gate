@@ -35,23 +35,16 @@ class CodeDetector(BaseDetector):
                     Signal(
                         type=pattern_def.signal_type,
                         pattern=pattern_def.label,
-                        description=pattern_def.description
-                        or f"Code pattern: {pattern_def.label}",
+                        description=pattern_def.description or f"Code pattern: {pattern_def.label}",
                         weight=pattern_def.weight,
                         occurrences=len(matches),
                     )
                 )
 
         # 2. Excessive inline comments (AI tends to over-comment)
-        added_lines = [
-            line[1:] for line in diff.split("\n") if line.startswith("+")
-        ]
-        comment_patterns = re.compile(
-            r"(?://\s.+|#\s.+|/\*.*\*/|<!--.*-->)"
-        )
-        comment_count = sum(
-            1 for line in added_lines if comment_patterns.search(line)
-        )
+        added_lines = [line[1:] for line in diff.split("\n") if line.startswith("+")]
+        comment_patterns = re.compile(r"(?://\s.+|#\s.+|/\*.*\*/|<!--.*-->)")
+        comment_count = sum(1 for line in added_lines if comment_patterns.search(line))
         if len(added_lines) > 0 and comment_count / len(added_lines) > 0.4:
             signals.append(
                 Signal(
@@ -81,9 +74,7 @@ class CodeDetector(BaseDetector):
             )
 
         # 4. Overly descriptive variable/function names
-        verbose_names = re.findall(
-            r"\b[a-z]+(?:[A-Z][a-z]+){4,}\b", diff
-        )
+        verbose_names = re.findall(r"\b[a-z]+(?:[A-Z][a-z]+){4,}\b", diff)
         if len(verbose_names) >= 3:
             signals.append(
                 Signal(

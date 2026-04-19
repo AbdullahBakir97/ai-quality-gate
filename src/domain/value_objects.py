@@ -27,6 +27,4 @@ class Threshold:
 
     def __post_init__(self) -> None:
         if self.warn >= self.fail:
-            raise ValueError(
-                f"warn ({self.warn}) must be less than fail ({self.fail})"
-            )
+            raise ValueError(f"warn ({self.warn}) must be less than fail ({self.fail})")

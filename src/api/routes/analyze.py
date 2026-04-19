@@ -36,11 +36,7 @@ async def analyze_text(
     Returns:
         An :class:`AnalyzeResponse` with AI detection and quality results.
     """
-    contribution_type = (
-        ContributionType.PULL_REQUEST
-        if request.type == "pull_request"
-        else ContributionType.ISSUE
-    )
+    contribution_type = ContributionType.PULL_REQUEST if request.type == "pull_request" else ContributionType.ISSUE
 
     context = ContributionContext(
         title=request.title or "Untitled",

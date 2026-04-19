@@ -51,6 +51,7 @@ class StructuralPattern:
 # Individual test functions
 # ---------------------------------------------------------------------------
 
+
 def _numbered_list_heavy(text: str) -> float:
     """Detect text where the majority of lines are numbered items."""
     lines = [ln for ln in text.splitlines() if ln.strip()]
@@ -128,6 +129,7 @@ def _bullet_symmetry(text: str) -> float:
 # ---------------------------------------------------------------------------
 # Public factory
 # ---------------------------------------------------------------------------
+
 
 def get_structural_patterns() -> list[StructuralPattern]:
     """Return all built-in structural detection patterns."""
