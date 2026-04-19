@@ -3,11 +3,11 @@
 from enum import StrEnum
 
 __all__ = [
-    "SignalType",
-    "Confidence",
-    "Grade",
     "ActionType",
+    "Confidence",
     "ContributionType",
+    "Grade",
+    "SignalType",
 ]
 
 

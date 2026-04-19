@@ -2,8 +2,8 @@
 
 import re
 
-from src.domain.enums import SignalType
 from src.analyzers.patterns.registry import PatternDefinition
+from src.domain.enums import SignalType
 
 __all__ = ["get_phrasing_patterns"]
 

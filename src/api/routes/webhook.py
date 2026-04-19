@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 
-from fastapi import APIRouter, Depends, Header, Request, Response
+from fastapi import APIRouter, Depends, Header, Request
 
 from src.api.dependencies import get_container, get_webhook_handler
 from src.api.schemas import WebhookResponse
@@ -35,9 +35,8 @@ async def receive_webhook(
     body = await request.body()
 
     # Verify signature if a verifier is configured
-    if container.webhook_verifier is not None:
-        if not container.webhook_verifier.verify(body, x_hub_signature_256):
-            raise WebhookValidationError("Invalid webhook signature")
+    if container.webhook_verifier is not None and not container.webhook_verifier.verify(body, x_hub_signature_256):
+        raise WebhookValidationError("Invalid webhook signature")
 
     payload = await request.json()
 

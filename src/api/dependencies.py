@@ -13,8 +13,8 @@ if TYPE_CHECKING:
 
 __all__ = [
     "get_container",
-    "get_webhook_handler",
     "get_orchestrator",
+    "get_webhook_handler",
 ]
 
 

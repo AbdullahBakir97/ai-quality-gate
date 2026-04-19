@@ -2,7 +2,6 @@
 
 from abc import ABC
 
-from src.domain.entities import Signal
 from src.domain.interfaces import IDetector
 
 __all__ = ["BaseDetector"]

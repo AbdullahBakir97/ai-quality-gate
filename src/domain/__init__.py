@@ -1,18 +1,18 @@
 """Domain layer — pure business logic with zero external dependencies."""
 
-from .enums import (
-    ActionType,
-    Confidence,
-    ContributionType,
-    Grade,
-    SignalType,
-)
 from .entities import (
     AnalysisResult,
     ContributionContext,
     QualityCheck,
     QualityReport,
     Signal,
+)
+from .enums import (
+    ActionType,
+    Confidence,
+    ContributionType,
+    Grade,
+    SignalType,
 )
 from .exceptions import (
     AIQualityGateError,

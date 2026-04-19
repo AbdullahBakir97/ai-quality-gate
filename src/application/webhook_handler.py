@@ -141,9 +141,7 @@ class WebhookHandler:
             return True
         if user in config.exempt.users:
             return True
-        if any(lbl in config.exempt.labels for lbl in labels):
-            return True
-        return False
+        return any(lbl in config.exempt.labels for lbl in labels)
 
     def _build_context(
         self,

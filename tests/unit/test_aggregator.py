@@ -40,7 +40,7 @@ class TestSignalAggregator:
 
     def test_few_signals_produce_low_confidence(self, aggregator: SignalAggregator):
         signals = [_make_signal(0.2)]
-        score, confidence, is_ai = aggregator.aggregate(signals, "")
+        _score, confidence, _is_ai = aggregator.aggregate(signals, "")
         assert confidence in (Confidence.MINIMAL, Confidence.NONE)
 
     def test_score_capped_at_100(self, aggregator: SignalAggregator):
@@ -50,5 +50,5 @@ class TestSignalAggregator:
 
     def test_medium_confidence_threshold(self, aggregator: SignalAggregator):
         signals = [_make_signal(0.3) for _ in range(4)]
-        score, confidence, _ = aggregator.aggregate(signals, "")
+        _score, confidence, _ = aggregator.aggregate(signals, "")
         assert confidence in (Confidence.MEDIUM, Confidence.LOW)

@@ -2,6 +2,7 @@
 
 import re
 from collections import Counter
+from typing import ClassVar
 
 from src.domain.entities import Signal
 from src.domain.enums import Confidence
@@ -12,8 +13,7 @@ __all__ = ["SignalAggregator"]
 class SignalAggregator:
     """Aggregates detection signals into a final AI score with confidence."""
 
-    # Words considered filler when computing substance ratio.
-    _FILLER_WORDS: set[str] = {
+    _FILLER_WORDS: ClassVar[set[str]] = {
         "very", "really", "just", "quite", "rather", "somewhat", "basically",
         "actually", "literally", "simply", "essentially", "overall",
         "generally", "typically", "usually", "obviously", "clearly",

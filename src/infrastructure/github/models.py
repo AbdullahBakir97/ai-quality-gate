@@ -5,12 +5,12 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 
 __all__ = [
-    "UserPayload",
-    "LabelPayload",
-    "RepositoryPayload",
     "InstallationPayload",
     "IssuePayload",
+    "LabelPayload",
     "PullRequestPayload",
+    "RepositoryPayload",
+    "UserPayload",
     "WebhookPayload",
 ]
 

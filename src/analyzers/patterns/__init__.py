@@ -4,12 +4,12 @@ This package provides the central ``PatternRegistry`` and factory functions
 that populate it with all built-in detection patterns.
 """
 
-from src.analyzers.patterns.registry import PatternDefinition, PatternRegistry
-from src.analyzers.patterns.vocabulary import get_vocabulary_patterns
-from src.analyzers.patterns.phrasing import get_phrasing_patterns
-from src.analyzers.patterns.structural import StructuralPattern, get_structural_patterns
 from src.analyzers.patterns.code_patterns import get_code_patterns
 from src.analyzers.patterns.hallucination import get_hallucination_patterns
+from src.analyzers.patterns.phrasing import get_phrasing_patterns
+from src.analyzers.patterns.registry import PatternDefinition, PatternRegistry
+from src.analyzers.patterns.structural import StructuralPattern, get_structural_patterns
+from src.analyzers.patterns.vocabulary import get_vocabulary_patterns
 
 __all__ = [
     "PatternDefinition",

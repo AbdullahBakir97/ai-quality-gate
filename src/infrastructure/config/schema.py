@@ -6,11 +6,11 @@ from pydantic import BaseModel, Field
 
 __all__ = [
     "AIConfig",
-    "QualityConfig",
     "AnalyzeConfig",
-    "LabelsConfig",
-    "ExemptConfig",
     "AppConfig",
+    "ExemptConfig",
+    "LabelsConfig",
+    "QualityConfig",
 ]
 
 

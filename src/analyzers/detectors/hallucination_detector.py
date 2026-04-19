@@ -2,9 +2,9 @@
 
 import re
 
+from src.analyzers.patterns.registry import PatternRegistry
 from src.domain.entities import Signal
 from src.domain.enums import SignalType
-from src.analyzers.patterns.registry import PatternRegistry
 
 from .base import BaseDetector
 

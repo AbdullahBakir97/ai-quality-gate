@@ -1,8 +1,8 @@
 """Pattern-based AI content detector using the PatternRegistry."""
 
+from src.analyzers.patterns.registry import PatternRegistry
 from src.domain.entities import Signal
 from src.domain.enums import SignalType
-from src.analyzers.patterns.registry import PatternRegistry
 
 from .base import BaseDetector
 

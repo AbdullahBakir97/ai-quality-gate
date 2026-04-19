@@ -6,14 +6,16 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from src.infrastructure.config.schema import AppConfig
+
     from .entities import AnalysisResult, ContributionContext, QualityReport, Signal
 
 __all__ = [
-    "IDetector",
-    "IScorer",
-    "IGitHubClient",
-    "IConfigLoader",
     "IActionHandler",
+    "IConfigLoader",
+    "IDetector",
+    "IGitHubClient",
+    "IScorer",
 ]
 
 
@@ -86,7 +88,7 @@ class IConfigLoader(ABC):
     """Loads application configuration for a given repository."""
 
     @abstractmethod
-    async def load(self, owner: str, repo: str) -> "AppConfig":
+    async def load(self, owner: str, repo: str) -> AppConfig:
         ...
 
 
@@ -98,6 +100,6 @@ class IActionHandler(ABC):
         self,
         context: ContributionContext,
         result: AnalysisResult,
-        config: "AppConfig",
+        config: AppConfig,
     ) -> None:
         ...

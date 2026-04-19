@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from .schema import AppConfig
 
-__all__ = ["DefaultConfigFactory", "MESSAGE_TEMPLATES"]
+__all__ = ["MESSAGE_TEMPLATES", "DefaultConfigFactory"]
 
 
 MESSAGE_TEMPLATES: dict[str, str] = {

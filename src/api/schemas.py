@@ -5,11 +5,11 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 
 __all__ = [
+    "AIDetectionResult",
     "AnalyzeRequest",
     "AnalyzeResponse",
-    "AIDetectionResult",
-    "QualityResult",
     "HealthResponse",
+    "QualityResult",
     "WebhookResponse",
 ]
 

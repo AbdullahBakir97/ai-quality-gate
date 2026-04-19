@@ -60,8 +60,8 @@ class Container:
 
         # Scorers and aggregator are imported lazily to allow the
         # analyzers package to be built incrementally.
-        from src.analyzers.scorers import IssueScorer, PRScorer
         from src.analyzers.aggregator import SignalAggregator
+        from src.analyzers.scorers import IssueScorer, PRScorer
 
         self.issue_scorer = IssueScorer()
         self.pr_scorer = PRScorer()

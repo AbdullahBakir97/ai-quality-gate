@@ -4,7 +4,6 @@ import pytest
 
 from src.analyzers.detectors.pattern_detector import PatternDetector
 from src.analyzers.patterns.registry import PatternRegistry
-from src.analyzers.patterns import register_default_patterns
 from src.domain.enums import SignalType
 
 

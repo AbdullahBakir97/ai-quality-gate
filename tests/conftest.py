@@ -2,10 +2,10 @@
 
 import pytest
 
+from src.analyzers.patterns import register_default_patterns
+from src.analyzers.patterns.registry import PatternRegistry
 from src.domain.entities import ContributionContext
 from src.domain.enums import ContributionType
-from src.analyzers.patterns.registry import PatternRegistry
-from src.analyzers.patterns import register_default_patterns
 
 
 @pytest.fixture

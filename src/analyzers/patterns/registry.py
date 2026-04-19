@@ -1,7 +1,7 @@
 """Thread-safe pattern registry using the Registry design pattern."""
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import ClassVar
 
 from src.domain.enums import SignalType

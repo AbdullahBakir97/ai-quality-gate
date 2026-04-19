@@ -2,10 +2,10 @@
 
 __all__ = [
     "AIQualityGateError",
+    "AnalysisError",
     "ConfigurationError",
     "GitHubAPIError",
     "WebhookValidationError",
-    "AnalysisError",
 ]
 
 
