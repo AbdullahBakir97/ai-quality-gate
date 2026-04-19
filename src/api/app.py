@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from src.api.middleware.error_handler import register_error_handlers
@@ -66,6 +67,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     # --- Error handlers ---
     register_error_handlers(app)
+
+    # --- Root redirect ---
+    @app.get("/", include_in_schema=False)
+    async def root():
+        return RedirectResponse(url="/dashboard")
 
     # --- Routers ---
     app.include_router(webhook_router)
