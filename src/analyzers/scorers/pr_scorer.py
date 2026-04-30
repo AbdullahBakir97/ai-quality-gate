@@ -140,12 +140,34 @@ class PRScorer(BaseScorer):
 
     @staticmethod
     def _check_tests_included(diff: str | None) -> QualityCheck:
-        """Check if the diff includes changes to test/spec files."""
+        """Check if the diff includes changes to test/spec files.
+
+        Detects test files across languages and monorepo layouts:
+        - Singular ``test/`` and plural ``tests/`` directories anywhere
+        - ``__tests__/`` (Jest convention)
+        - ``spec/`` and ``testing/`` directories
+        - File names: ``test_x``, ``x_test.``, ``x.test.``, ``x.spec.``
+        - Modern web extensions: ``.test.tsx``, ``.spec.tsx``
+
+        Uses path separators to avoid matching substrings like "contestant".
+        """
         if not diff:
             return QualityCheck("tests-included", 0, 10, "No diff provided")
 
+        # Match the +++ b/<path> diff header lines and check the path.
+        # Anchoring on 'b/' lets us treat the path as a fresh string,
+        # so leading directories like 'spec/...' are also caught.
         test_file_pattern = re.compile(
-            r"^\+{3}\s+b/.*(?:test|spec|__tests__|_test\.|\.test\.|\.spec\.)",
+            r"^\+{3}\s+b/(?:[^\s]*/)?(?:"
+            r"tests?/|"  # /test/ or /tests/ as a path component
+            r"__tests__/|"  # jest convention
+            r"spec/|"  # ruby/RSpec convention
+            r"testing/|"  # python testing/ subdir
+            r"test_[^/\s]+|"  # filename starts with test_
+            r"[^/\s]+_test\.[^/\s]+|"  # filename like x_test.go
+            r"[^/\s]+\.test\.[^/\s]+|"  # filename like x.test.ts
+            r"[^/\s]+\.spec\.[^/\s]+"  # filename like x.spec.ts
+            r")",
             re.MULTILINE | re.IGNORECASE,
         )
         if test_file_pattern.search(diff):
