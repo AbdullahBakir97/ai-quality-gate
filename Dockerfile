@@ -1,4 +1,4 @@
-FROM python:3.14-slim AS base
+FROM python:3.12-slim AS base
 
 WORKDIR /app
 
@@ -6,16 +6,20 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1
 
+# Install dependencies in a builder layer so we can keep the final image
+# free of build tooling. README.md is referenced by pyproject.toml's
+# `readme = "README.md"` field, so it must be present at install time.
 FROM base AS builder
-
-COPY pyproject.toml ./
+COPY pyproject.toml README.md ./
 RUN pip install --no-cache-dir .
 
 FROM base AS production
 
-COPY --from=builder /usr/local/lib/python3.14/site-packages /usr/local/lib/python3.14/site-packages
+# Copy installed packages from the builder stage.
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
+# Source last so the layer cache invalidates only on src/dashboard changes.
 COPY src/ ./src/
 COPY dashboard/ ./dashboard/
 
