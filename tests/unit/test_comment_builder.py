@@ -8,6 +8,8 @@ These tests verify three things at once:
 
 from __future__ import annotations
 
+from typing import ClassVar
+
 import pytest
 
 from src.application.comment_builder import CommentBuilder
@@ -25,7 +27,6 @@ from src.domain.enums import (
     SignalType,
 )
 from src.infrastructure.config.schema import AppConfig
-
 
 # ------------------------------------------------------------------ #
 # Fixtures
@@ -77,9 +78,7 @@ def _ai_result(
     if quality_checks is not None:
         quality_report = QualityReport.from_checks(quality_checks)
     elif quality_score == 100:
-        quality_report = QualityReport.from_checks(
-            [QualityCheck("body-present", 15, 15, "Description provided")]
-        )
+        quality_report = QualityReport.from_checks([QualityCheck("body-present", 15, 15, "Description provided")])
     else:
         quality_report = QualityReport(
             score=quality_score,
@@ -367,7 +366,7 @@ class TestPullRequestAdvice:
 class TestVoiceQuality:
     """The comment should not contain phrases AI Quality Gate itself flags as bot-y."""
 
-    AI_TRIGGERS = [
+    AI_TRIGGERS: ClassVar[list[str]] = [
         "I'd be happy to",
         "hope this helps",
         "feel free to reach out",
@@ -382,7 +381,6 @@ class TestVoiceQuality:
         ctx = _ctx()
 
         comment = builder.build(ctx, result, config)
-        lowered = comment.lower()
 
         for phrase in self.AI_TRIGGERS:
             # The phrase 'I\'d be happy to' may legitimately appear inside the
@@ -393,9 +391,7 @@ class TestVoiceQuality:
             non_code_text = "\n".join(
                 line for line in comment.split("\n") if not line.lstrip().startswith("- `")
             ).lower()
-            assert phrase.lower() not in non_code_text, (
-                f"Comment contains AI-style phrase '{phrase}' in prose"
-            )
+            assert phrase.lower() not in non_code_text, f"Comment contains AI-style phrase '{phrase}' in prose"
 
     def test_comment_uses_imperative_action_verbs(self, builder, config):
         """Actionable advice should start with verbs like 'Add', 'Include', 'Use'."""
@@ -415,9 +411,7 @@ class TestVoiceQuality:
         # At least two of these imperative verbs appear in the advice prose.
         imperatives = ["Add", "Include", "Use", "Paste", "Describe", "Link", "Attach", "Have"]
         found = [v for v in imperatives if v in comment]
-        assert len(found) >= 2, (
-            f"Comment lacks imperative action verbs. Found only: {found}\n\n{comment}"
-        )
+        assert len(found) >= 2, f"Comment lacks imperative action verbs. Found only: {found}\n\n{comment}"
 
 
 # ------------------------------------------------------------------ #

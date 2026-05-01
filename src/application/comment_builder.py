@@ -77,7 +77,7 @@ _SIGNAL_EXPLANATIONS: dict[str, str] = {
 
 # Maps quality check names to specific, actionable next-step messages.
 _QUALITY_ADVICE: dict[str, str] = {
-    "title-length": "Aim for 20–72 characters. Enough to understand the issue without opening it.",
+    "title-length": "Aim for 20-72 characters. Enough to understand the issue without opening it.",
     "title-specificity": (
         "Vague titles like 'bug' or 'not working' make it impossible to triage without reading the full body. "
         "Include the component, the symptom, and ideally the trigger — e.g. "
@@ -93,8 +93,7 @@ _QUALITY_ADVICE: dict[str, str] = {
         "what is the problem, what have you tried, and what outcome do you expect?"
     ),
     "body-length": (
-        "The description is too brief to act on. Add: what were you doing, what did you expect, "
-        "what happened instead."
+        "The description is too brief to act on. Add: what were you doing, what did you expect, what happened instead."
     ),
     "reproduction-steps": (
         "Add numbered reproduction steps. Without them, this bug cannot be reproduced or verified as fixed. "
@@ -211,14 +210,10 @@ class CommentBuilder:
 
         rows = []
         if ai_flagged:
-            rows.append(
-                f"| AI Detection | {ai_bar} {result.ai_score}/100 "
-                f"({result.ai_confidence.value} confidence) |"
-            )
+            rows.append(f"| AI Detection | {ai_bar} {result.ai_score}/100 ({result.ai_confidence.value} confidence) |")
         if quality_flagged:
             rows.append(
-                f"| Quality | {q_bar} {result.quality_report.score}/100 "
-                f"(Grade {result.quality_report.grade.value}) |"
+                f"| Quality | {q_bar} {result.quality_report.score}/100 (Grade {result.quality_report.grade.value}) |"
             )
 
         table = "| Check | Score |\n|-------|-------|\n" + "\n".join(rows)
@@ -305,13 +300,12 @@ class CommentBuilder:
             )
         elif quality_flagged:
             parts.append(
-                "Edit the " + ("PR description" if is_pr else "issue body")
+                "Edit the "
+                + ("PR description" if is_pr else "issue body")
                 + " and this check will re-run automatically."
             )
         elif ai_flagged:
-            parts.append(
-                "If you wrote this yourself, don't worry — the check can be dismissed by a maintainer."
-            )
+            parts.append("If you wrote this yourself, don't worry — the check can be dismissed by a maintainer.")
 
         parts.append(
             "_[AI Quality Gate](https://github.com/AbdullahBakir97/ai-quality-gate) "
@@ -337,7 +331,7 @@ class CommentBuilder:
             if signal.type.value not in seen_types:
                 seen_types.add(signal.type.value)
 
-            count_note = f" (×{signal.occurrences})" if signal.occurrences > 1 else ""
+            count_note = f" (x{signal.occurrences})" if signal.occurrences > 1 else ""
             lines.append(f"- `{signal.pattern}`{count_note} — {explanation} _{type_label}_")
 
         return lines

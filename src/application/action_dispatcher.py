@@ -71,9 +71,7 @@ class ActionDispatcher:
                 await self._client.close_contribution(context.repo_owner, context.repo_name, context.number)
             case "request-changes" if context.contribution_type == ContributionType.PULL_REQUEST:
                 if comment:
-                    await self._client.request_changes(
-                        context.repo_owner, context.repo_name, context.number, comment
-                    )
+                    await self._client.request_changes(context.repo_owner, context.repo_name, context.number, comment)
 
         logger.info(
             "Dispatched action=%s for %s/%s#%d (ai=%d, quality=%d)",
