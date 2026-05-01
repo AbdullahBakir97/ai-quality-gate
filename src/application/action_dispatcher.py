@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import logging
 
+from src.application.comment_builder import CommentBuilder
 from src.domain.entities import AnalysisResult, ContributionContext
 from src.domain.enums import ContributionType
 from src.domain.interfaces import IGitHubClient
-from src.infrastructure.config.defaults import MESSAGE_TEMPLATES
 from src.infrastructure.config.schema import AppConfig
 
 __all__ = ["ActionDispatcher"]
@@ -25,6 +25,7 @@ class ActionDispatcher:
 
     def __init__(self, github_client: IGitHubClient) -> None:
         self._client = github_client
+        self._comment_builder = CommentBuilder()
 
     async def dispatch(
         self,
@@ -59,8 +60,9 @@ class ActionDispatcher:
             await self._client.add_labels(context.repo_owner, context.repo_name, context.number, labels)
 
         # Build and post comment
-        comment = self._build_comment(result, config)
-        await self._client.post_comment(context.repo_owner, context.repo_name, context.number, comment)
+        comment = self._comment_builder.build(context, result, config)
+        if comment:
+            await self._client.post_comment(context.repo_owner, context.repo_name, context.number, comment)
 
         # Determine strongest action
         action = self._determine_action(result, config)
@@ -68,7 +70,10 @@ class ActionDispatcher:
             case "close":
                 await self._client.close_contribution(context.repo_owner, context.repo_name, context.number)
             case "request-changes" if context.contribution_type == ContributionType.PULL_REQUEST:
-                await self._client.request_changes(context.repo_owner, context.repo_name, context.number, comment)
+                if comment:
+                    await self._client.request_changes(
+                        context.repo_owner, context.repo_name, context.number, comment
+                    )
 
         logger.info(
             "Dispatched action=%s for %s/%s#%d (ai=%d, quality=%d)",
@@ -101,50 +106,6 @@ class ActionDispatcher:
             labels.append(config.labels.low_quality)
 
         return labels
-
-    def _build_comment(self, result: AnalysisResult, config: AppConfig) -> str:
-        """Build a markdown comment summarising the analysis.
-
-        Args:
-            result: The analysis result.
-            config: The repository configuration.
-
-        Returns:
-            A formatted markdown string.
-        """
-        should_act_ai = result.ai_score >= config.ai.warn
-        should_act_quality = result.quality_report.score < config.quality.minimum
-
-        signals_text = (
-            "\n".join(
-                f"- **{s.pattern}** — {s.description} (weight: {s.contribution:.1f})" for s in result.ai_signals[:10]
-            )
-            or "_No signals detected._"
-        )
-
-        improvements_text = (
-            "\n".join(
-                f"- **{c.name}**: {c.detail} ({c.score}/{c.max_score})"
-                for c in result.quality_report.failed_checks + result.quality_report.partial_checks
-            )
-            or "_No improvements needed._"
-        )
-
-        if should_act_ai and should_act_quality:
-            template = MESSAGE_TEMPLATES["combined"]
-        elif should_act_ai:
-            template = MESSAGE_TEMPLATES["ai_warning"]
-        else:
-            template = MESSAGE_TEMPLATES["low_quality"]
-
-        return template.format(
-            ai_score=result.ai_score,
-            confidence=result.ai_confidence.value,
-            quality_score=result.quality_report.score,
-            grade=result.quality_report.grade.value,
-            signals=signals_text,
-            improvements=improvements_text,
-        )
 
     def _determine_action(self, result: AnalysisResult, config: AppConfig) -> str:
         """Select the strongest action to take.
