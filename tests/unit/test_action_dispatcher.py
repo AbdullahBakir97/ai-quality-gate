@@ -65,10 +65,14 @@ def _quality_report(score: int) -> QualityReport:
     exactly without needing to compute through ``from_checks``.
     """
     grade = (
-        Grade.A if score >= 90
-        else Grade.B if score >= 80
-        else Grade.C if score >= 70
-        else Grade.D if score >= 60
+        Grade.A
+        if score >= 90
+        else Grade.B
+        if score >= 80
+        else Grade.C
+        if score >= 70
+        else Grade.D
+        if score >= 60
         else Grade.F
     )
     return QualityReport(

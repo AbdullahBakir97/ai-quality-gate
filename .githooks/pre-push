@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+#
+# Pre-push checks for ai-quality-gate.
+#
+# Mirrors the CI workflow at .github/workflows/ci.yml so failures land here
+# (and the push aborts) instead of after we have already contacted GitHub.
+# Catches ruff lint, ruff format, and pytest regressions before they hit CI.
+#
+# Install once per clone (works on Linux / macOS / Windows Git Bash):
+#
+#     git config core.hooksPath .githooks
+#
+# To bypass for a one-off WIP push (NOT recommended):
+#
+#     git push --no-verify
+#
+
+set -eu
+
+# ─── 1. Locate a Python interpreter ─────────────────────────────────────────
+if command -v python >/dev/null 2>&1; then
+    PYTHON="python"
+elif command -v python3 >/dev/null 2>&1; then
+    PYTHON="python3"
+else
+    echo "[pre-push] ✗ no python interpreter found on PATH" >&2
+    echo "           install Python 3.12+ or skip this push with --no-verify" >&2
+    exit 1
+fi
+
+# ─── 2. Confirm ruff + pytest are importable; offer install command on miss ─
+missing=()
+"$PYTHON" -c "import ruff" >/dev/null 2>&1 || missing+=("ruff")
+"$PYTHON" -c "import pytest" >/dev/null 2>&1 || missing+=("pytest")
+
+if [ "${#missing[@]}" -gt 0 ]; then
+    echo "[pre-push] ✗ missing python packages: ${missing[*]}" >&2
+    echo "           install with:" >&2
+    echo "             $PYTHON -m pip install -e \".[dev]\"" >&2
+    echo "           or bypass with: git push --no-verify" >&2
+    exit 1
+fi
+
+# ─── 3. Run each CI step; abort on first failure ────────────────────────────
+run() {
+    local label="$1"
+    shift
+    printf '\n▶ %s\n' "$label"
+    if ! "$@"; then
+        printf '\n[pre-push] ✗ %s failed — push aborted\n' "$label" >&2
+        echo "           fix locally and try again, or bypass with --no-verify" >&2
+        exit 1
+    fi
+}
+
+run "ruff check src/ tests/"          "$PYTHON" -m ruff check src/ tests/
+run "ruff format --check src/ tests/" "$PYTHON" -m ruff format --check src/ tests/
+run "pytest tests/"                   "$PYTHON" -m pytest tests/ --no-cov -q
+
+printf '\n[pre-push] ✓ all checks passed\n'

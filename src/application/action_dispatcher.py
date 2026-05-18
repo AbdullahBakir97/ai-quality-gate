@@ -176,10 +176,7 @@ class ActionDispatcher:
                     + "\n\nSee the PR comment for the specific issues to address."
                 )
             case "neutral":
-                return (
-                    "AI Quality Gate detected AI-content signals but the PR is otherwise acceptable.\n\n"
-                    + scores
-                )
+                return "AI Quality Gate detected AI-content signals but the PR is otherwise acceptable.\n\n" + scores
             case _:
                 return "AI Quality Gate passed this pull request.\n\n" + scores
 

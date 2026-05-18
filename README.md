@@ -58,6 +58,10 @@ git clone https://github.com/AbdullahBakir97/ai-quality-gate.git
 cd ai-quality-gate
 pip install -e ".[dev]"
 
+# Install the pre-push hook (runs ruff + pytest before every push so CI
+# never sees a failure that could have been caught locally)
+git config core.hooksPath .githooks
+
 # Configure
 cp .env.example .env
 # Edit .env with your GitHub App credentials

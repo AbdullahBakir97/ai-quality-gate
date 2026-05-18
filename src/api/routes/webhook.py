@@ -69,9 +69,7 @@ async def receive_webhook(
     """
     body = await request.body()
 
-    if container.webhook_verifier is not None and not container.webhook_verifier.verify(
-        body, x_hub_signature_256
-    ):
+    if container.webhook_verifier is not None and not container.webhook_verifier.verify(body, x_hub_signature_256):
         raise WebhookValidationError("Invalid webhook signature")
 
     payload = await request.json()
