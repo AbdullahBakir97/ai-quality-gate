@@ -39,7 +39,7 @@ dev = [
     "pytest-asyncio>=0.24.0",
     "pytest-cov>=6.0.0",
     "httpx",
-    "ruff>=0.8.0",
+    "ruff>=0.9.0",  # 0.9 introduced TC001-003 (the previous TCH001-003 names are removed)
     "mypy>=1.13.0",
 ]
 ml = [
@@ -73,7 +73,7 @@ select = [
     "TCH",  # flake8-type-checking
     "RUF",  # ruff-specific
 ]
-ignore = ["E501", "B008", "TCH001", "TCH002", "TCH003", "TC001", "TC002", "TC003", "RUF022"]
+ignore = ["E501", "B008", "TC001", "TC002", "TC003", "RUF022"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["src"]

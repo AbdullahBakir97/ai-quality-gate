@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 
 from .enums import Confidence, ContributionType, Grade, SignalType
 
@@ -124,4 +124,4 @@ class AnalysisResult:
     is_likely_ai: bool
     quality_report: QualityReport
     contribution_type: ContributionType
-    analyzed_at: datetime = field(default_factory=datetime.utcnow)
+    analyzed_at: datetime = field(default_factory=lambda: datetime.now(UTC))

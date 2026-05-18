@@ -37,6 +37,12 @@ class WebhookHandler:
         self._action_dispatcher = action_dispatcher
         self._config_loader = config_loader
 
+    # GitHub webhook actions we react to.  ``reopened`` is included so that
+    # closing and re-opening a PR (a common manual re-trigger and a CI pattern
+    # for verifying bot behaviour) re-runs the analysis.
+    _PR_ACTIONS = ("opened", "edited", "reopened", "synchronize", "ready_for_review")
+    _ISSUE_ACTIONS = ("opened", "edited", "reopened")
+
     async def handle_event(self, event_type: str, payload: dict) -> None:
         """Dispatch a webhook event for processing.
 
@@ -44,13 +50,18 @@ class WebhookHandler:
             event_type: The GitHub event type (e.g. ``issues``, ``pull_request``).
             payload: The parsed JSON payload.
         """
+        action = payload.get("action")
         match event_type:
             case "issues":
-                if payload.get("action") in ("opened", "edited"):
+                if action in self._ISSUE_ACTIONS:
                     await self._handle_issue(payload)
+                else:
+                    logger.debug("Ignoring issues action: %s", action)
             case "pull_request":
-                if payload.get("action") in ("opened", "edited", "synchronize"):
+                if action in self._PR_ACTIONS:
                     await self._handle_pull_request(payload)
+                else:
+                    logger.debug("Ignoring pull_request action: %s", action)
             case _:
                 logger.debug("Ignoring event type: %s", event_type)
 
