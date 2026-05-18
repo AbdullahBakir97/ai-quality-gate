@@ -6,12 +6,30 @@ A production-grade GitHub App that detects AI-generated issues and pull requests
 
 - **AI Detection** — 40+ fingerprint patterns detecting vocabulary, phrasing, structural, and hallucination signals
 - **Quality Scoring** — 15+ checks for issues (repro steps, env info, code snippets) and PRs (linked issues, tests, diff analysis)
-- **GitHub Checks** — Pass/warn/fail status directly on pull requests
-- **Auto-Labeling** — `ai-generated`, `ai-suspected`, `low-quality`, `high-quality`
+- **GitHub Checks** — A `success` / `neutral` / `failure` check run is posted on **every** pull request (visible in the Checks tab and usable as a branch-protection requirement)
+- **Auto-Labeling** — `ai-generated`, `ai-suspected`, `low-quality`, `high-quality` (labels are auto-created if missing)
 - **Configurable Actions** — Comment, label, request changes, or auto-close
 - **Per-Repo Config** — `.github/ai-gate.yml` customization
 - **Interactive Dashboard** — Live demo analyzer
 - **ML-Ready** — Extensible detector architecture for future ML models
+
+## How it works
+
+When GitHub delivers a webhook event the app:
+
+1. **Acknowledges immediately** (returns `200 OK` inside GitHub's 10 s delivery window) and schedules the analysis on a background task — so slow detectors or a cold container never cause a delivery to be marked failed.
+2. **Posts a check run** on the PR's head commit as the very first action. Conclusion follows the configured thresholds:
+   - `success` — AI score < `ai.warn` and quality score ≥ `quality.minimum`
+   - `neutral` — AI score ≥ `ai.warn` but below `ai.fail`, and quality is acceptable
+   - `failure` — AI score ≥ `ai.fail` **or** quality score < `quality.minimum`
+3. **Applies labels, posts a comment, and optionally requests changes or closes** the contribution. Each of these is wrapped in its own logged try/except so a transient GitHub API failure on one call (e.g. a rate-limited label create) does not silence the rest.
+
+### Webhook events handled
+
+| Event | Actions that trigger analysis |
+|-------|-------------------------------|
+| `pull_request` | `opened`, `edited`, `reopened`, `synchronize`, `ready_for_review` |
+| `issues` | `opened`, `edited`, `reopened` |
 
 ## Architecture
 
