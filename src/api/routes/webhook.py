@@ -42,7 +42,7 @@ async def _process_event_safely(
     """
     try:
         await handler.handle_event(event_type, payload)
-    except Exception as exc:  # noqa: BLE001 — background safety net
+    except Exception as exc:  # background safety net — never re-raise from a BackgroundTask
         logger.exception(
             "webhook: background processing failed (event=%s action=%s): %s",
             event_type,

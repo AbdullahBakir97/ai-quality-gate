@@ -73,7 +73,7 @@ select = [
     "TCH",  # flake8-type-checking
     "RUF",  # ruff-specific
 ]
-ignore = ["E501", "B008", "TCH001", "TCH002", "TCH003", "TC001", "TC002", "TC003", "RUF022"]
+ignore = ["E501", "B008", "TC001", "TC002", "TC003", "RUF022"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["src"]

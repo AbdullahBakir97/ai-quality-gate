@@ -64,7 +64,7 @@ class ActionDispatcher:
 
         try:
             await self._apply_optional_actions(context, result, config)
-        except Exception as exc:  # noqa: BLE001 — top-level safety net
+        except Exception as exc:  # top-level safety net — fence the whole optional-action chain
             logger.exception(
                 "dispatch: optional-action chain failed for %s/%s#%d: %s",
                 context.repo_owner,
@@ -112,7 +112,7 @@ class ActionDispatcher:
                 conclusion,
                 details,
             )
-        except Exception as exc:  # noqa: BLE001 — we never abort dispatch on this
+        except Exception as exc:  # check-run failures must never abort the dispatch chain
             logger.exception(
                 "dispatch: create_check_run failed for %s/%s@%s: %s",
                 context.repo_owner,
@@ -199,7 +199,7 @@ class ActionDispatcher:
         if result.ai_signals:
             lines.extend(["", "### Top AI signals", ""])
             for signal in result.ai_signals[:5]:
-                count = f" (×{signal.occurrences})" if signal.occurrences > 1 else ""
+                count = f" (x{signal.occurrences})" if signal.occurrences > 1 else ""
                 lines.append(f"- `{signal.pattern}`{count} — {signal.description}")
 
         failed = result.quality_report.failed_checks
@@ -303,7 +303,7 @@ class ActionDispatcher:
         """Run a GitHub-client coroutine and log (don't propagate) any failure."""
         try:
             await coro_fn(*args)
-        except Exception as exc:  # noqa: BLE001 — fence per-action failures
+        except Exception as exc:  # fence per-action failures so one 4xx doesn't kill the chain
             logger.exception("dispatch: %s failed: %s", name, exc)
 
     def _determine_labels(self, result: AnalysisResult, config: AppConfig) -> list[str]:
